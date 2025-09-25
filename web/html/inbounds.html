@@ -731,7 +731,23 @@
                     <p>{{ i18n "pages.inbounds.oneClick.descriptionContent" }}</p>
                 </div>
                 
-                <div v-else>
+                <div v-else style="padding: 24px;">
+                    <div 
+                      @click="copyLink(inboundLink)" 
+                      style="text-align: center; margin-bottom: 20px; cursor: pointer; padding: 10px; border-radius: 8px;"
+					  :title="`{{ i18n "pages.inbounds.oneClick.clickToCopyTitle" }}`"
+                    >
+                      <p style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">
+                        {{ i18n "pages.inbounds.oneClick.scanQrcodeTitle" }}
+                      </p>
+                      
+                      <canvas id="oneClickQrcodeCanvas"></canvas>
+                      
+                      <p style="margin-top: 8px; font-size: 12px; color: #888;">
+                        {{ i18n "pages.inbounds.oneClick.clickToCopyHint" }}
+                      </p>
+                    </div>
+
                     <p><b>{{ i18n "pages.inbounds.oneClick.linkCreated" }}</b></p>
                     <a-input-search
                         :value="inboundLink"
@@ -1171,6 +1187,22 @@
                 }
             },
 
+			// 〔中文注释〕: 新增一个专门用于生成“一键配置”二维码的方法
+            generateOneClickQrCode(link) {
+                // 〔中文注释〕: this.$nextTick 是一个 Vue 特有的功能，它会等待 DOM 更新完成后再执行内部的代码。
+                // 这是必需的，因为 <canvas> 元素只有在 inboundLink 被赋值后才会显示出来，我们需要确保它存在才能进行绘制。
+                this.$nextTick(() => {
+                    const canvasElement = document.getElementById('oneClickQrcodeCanvas');
+                    if (canvasElement) {
+                        new QRious({
+                            element: canvasElement, // 〔中文注释〕: 关联到我们刚刚在 HTML 中添加的 canvas 元素
+                            value: link,            // 〔中文注释〕: 二维码的内容就是生成的分享链接
+                            size: 200,              // 〔中文注释〕: 设置二维码的尺寸为 200x200 像素
+                            level: 'M'              // 〔中文注释〕: 设置较高的容错率
+                        });
+                    }
+                });
+            },
 			
     // 【修改后】: 按照固定长度 2,4,6,8,10,12,14,16 来生成 shortIds
     generateShortIds() {
@@ -1343,6 +1375,9 @@
                     if (msg.success) {
                         const link = `vless://${uuid}@${window.location.hostname}:${port}?type=tcp&encryption=none&security=reality&pbk=${publicKey}&fp=chrome&sni=${randomSni}&sid=${linkSid}&spx=%2F&flow=xtls-rprx-vision#${remark}-${remark}`;
                         this.inboundLink = link;
+
+						// 〔中文注释〕: 在这里调用新增的二维码生成方法，把链接传进去
+                        this.generateOneClickQrCode(link);
                         
                         // 【新增】: 调用保存方法，将链接保存到历史记录
                         this.saveLinkToHistory('vless_reality', link);
@@ -1479,6 +1514,9 @@
                         const link = `vless://${uuid}@${window.location.hostname}:${port}?type=tcp&encryption=${encryption}&security=tls&fp=chrome&alpn=http%2F1.1&sni=${serverName}&flow=xtls-rprx-vision#${remark}-${remark}`;
                         this.inboundLink = link;
 
+						// 〔中文注释〕: 在这里调用新增的二维码生成方法，把链接传进去
+                        this.generateOneClickQrCode(link);
+
                         // 【新增】: 调用保存方法，将链接保存到历史记录
                         this.saveLinkToHistory('vless_tls_encryption', link);
                         
@@ -1493,17 +1531,49 @@
                 }
             },
 
+            // 【中文注释】: 这是修复后的 copyLink 方法
             async copyLink(linkToCopy) {
                 const link = linkToCopy || this.inboundLink;
                 if (!link) {
                     this.$message.warning('没有可复制的链接。');
                     return;
                 }
+
+                // 【中文注释】: 优先使用 Clipboard API，但它需要安全上下文 (HTTPS)
+                if (navigator.clipboard && window.isSecureContext) {
+                    try {
+                        await navigator.clipboard.writeText(link);
+                        this.$message.success('链接已成功复制到剪贴板！');
+                        return;
+                    } catch (err) {
+                        console.error('Clipboard API 复制失败，将尝试回退方法:', err);
+                        // 如果失败，则继续执行下面的回退方法
+                    }
+                }
+
+                // 【中文注释】: 回退方案，使用 document.execCommand，兼容性更好
+                const textArea = document.createElement("textarea");
+                textArea.value = link;
+                // 将输入框移动到屏幕外，防止干扰
+                textArea.style.position = "absolute";
+                textArea.style.left = "-9999px";
+                textArea.setAttribute("readonly", "");
+
+                document.body.appendChild(textArea);
+                
+                // 选择输入框中的内容
+                textArea.select();
+                
                 try {
-                    await navigator.clipboard.writeText(link);
+                    // 执行复制命令
+                    document.execCommand('copy');
                     this.$message.success('链接已成功复制到剪贴板！');
                 } catch (err) {
+                    console.error('execCommand 复制失败:', err);
                     this.$message.error('复制失败，请手动复制。');
+                } finally {
+                    // 无论成功与否，最后都移除这个临时输入框
+                    document.body.removeChild(textArea);
                 }
             },
 
