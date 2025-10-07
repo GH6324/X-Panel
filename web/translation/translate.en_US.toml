@@ -651,7 +651,7 @@
 "status" = "✅ Bot is OK!"
 "usage" = "❗ Please provide a text to search!"
 "getID" = "🆔 Your ID: <code>{{ .ID }}</code>"
-"helpAdminCommands" = "To restart Xray Core:\r\n<code>/restart</code>\r\n\r\nTo search for a client email:\r\n<code>/usage [Email]</code>\r\n\r\nTo search for inbounds (with client stats):\r\n<code>/inbound [Remark]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>"
+"helpAdminCommands" = "To restart Xray Core:\r\n<code>/restart</code>\r\n\r\nTo search for customer emails:\r\n<code>/usage [email]</code>\r\n\r\nTo search inbound (with customer statistics):\r\n<code>/inbound [notes]</code>\r\n\r\nTelegram chat ID:\r\n<code>/id</code>\r\n\r\nOne-click configuration:\r\n<code>/oneclick</code>\r\n\r\nSubscription conversion:\r\n<code>/subconverter</code>"
 "helpClientCommands" = "To search for statistics, use the following command:\r\n\r\n<code>/usage [Email]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>"
 "restartUsage" = "\r\n\r\n<code>/restart</code>"
 "restartSuccess" = "✅ Operation successful!"
@@ -672,7 +672,7 @@
 "datetime" = "⏰ Date&Time: {{ .DateTime }}\r\n"
 "hostname" = "💻 Host: {{ .Hostname }}\r\n"
 "version" = "🚀 X-Panel Version: v{{ .Version }}\r\n"
-"xrayVersion" = "📡 Xray Version: v{{ .XrayVersion }}\r\n"
+"xrayVersion" = "📡 Xray Core Version: v{{ .XrayVersion }}\r\n"
 "ipv6" = "🌐 IPv6: {{ .IPv6 }}\r\n"
 "ipv4" = "🌐 IPv4: {{ .IPv4 }}\r\n"
 "ip" = "🌐 IP: {{ .IP }}\r\n"
@@ -770,6 +770,8 @@
 "change_comment" = "⚙️💬 Comment"
 "ResetAllTraffics" = "Reset All Traffics"
 "SortedTrafficUsageReport" = "Sorted Traffic Usage Report"
+"oneClick" = "🚀 One-click configuration"
+"subconverter" = "🔄 Subscription conversion"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operation successful!"
