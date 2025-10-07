@@ -657,7 +657,7 @@
 "status" = "✅ 機器人正常運作！"
 "usage" = "❗ 請輸入要搜尋的文字！"
 "getID" = "🆔 您的 ID 為：<code>{{ .ID }}</code>"
-"helpAdminCommands" = "要重新啟動 Xray Core：\r\n<code>/restart</code>\r\n\r\n要搜尋客戶電子郵件：\r\n<code>/usage [電子郵件]</code>\r\n\r\n要搜尋入站（帶有客戶統計資料）：\r\n<code>/inbound [備註]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>"
+"helpAdminCommands" = "要重新啟動 Xray Core：\r\n<code>/restart</code>\r\n\n要搜尋客戶電子郵件：\r\n<code>/usage [電子郵件]</code>\r\n\r\n要搜尋入站（有客戶統計資料）：\r\n<code>\r\n\r\n要搜尋入站（有客戶統計資料）：\r\n<code> [備註]</code>\r\n\r\nTelegram聊天ID：\r\n<code>/id</code>\r\n\r\n一鍵設定：\r\n<code>/oneclick</code>\r\n\r\n訂閱轉換：\r\n<code>/subconverter</code>\r\n\r\n訂閱轉換：\r\n<code>/subconverter</code>\r\n\r\n訂閱轉換：\r\n<code>/subconverter</code>"
 "helpClientCommands" = "要搜尋統計資料，請使用以下指令：\r\n<code>/usage [電子郵件]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>"
 "restartUsage" = "\r\n\r\n<code>/restart</code>"
 "restartSuccess" = "✅ 操作成功！"
@@ -678,7 +678,7 @@
 "datetime" = "⏰ 日期時間：{{ .DateTime }}\r\n"
 "hostname" = "💻 主機名稱：{{ .Hostname }}\r\n"
 "version" = "🚀 X-Panel 版本：v{{ .Version }}\r\n"
-"xrayVersion" = "📡 Xray 版本：v{{ .XrayVersion }}\r\n"
+"xrayVersion" = "📡 Xray Core 版本：v{{ .XrayVersion }}\r\n"
 "ipv6" = "🌐 IPv6：{{ .IPv6 }}\r\n"
 "ipv4" = "🌐 IPv4：{{ .IPv4 }}\r\n"
 "ip" = "🌐 IP：{{ .IP }}\r\n"
@@ -776,6 +776,8 @@
 "change_comment" = "⚙️💬 評論"
 "ResetAllTraffics" = "重設所有流量"
 "SortedTrafficUsageReport" = "排序的流量使用報告"
+"oneClick" = "🚀 一鍵配置"
+"subconverter" = "🔄 訂閱轉換"
 
 [tgbot.answers]
 "successfulOperation" = "✅ 成功！"
