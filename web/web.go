@@ -118,7 +118,7 @@ type Server struct {
 
 	xrayService    service.XrayService
 	settingService service.SettingService
-	tgbotService   service.Tgbot
+	tgbotService    service.TelegramService
 	// 〔中文注释〕: 添加这个字段，用来“持有”从 main.go 传递过来的 serverService 实例。
 	serverService  service.ServerService
 
@@ -127,6 +127,7 @@ type Server struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 }
+
 
 // 【新增方法】：用于 main.go 将创建好的 tgBotService 注入进来
 func (s *Server) SetTelegramService(tgService service.TelegramService) {
