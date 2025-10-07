@@ -478,14 +478,14 @@ func (s *Server) Start() (err error) {
 func (s *Server) Stop() error {
 	s.cancel()
 	s.xrayService.StopXray()
+	if s.cron != nil {
+		s.cron.Stop()
+	}
 	// 只有在断言成功后，才能调用只在 *service.Tgbot 上定义的 Stop() 和 IsRunning() 方法。
 	if tgBot, ok := s.tgbotService.(*service.Tgbot); ok {
 		if tgBot.IsRunning() {
 			tgBot.Stop()
 		}
-	}
-	if s.tgbotService.IsRunning() {
-		s.tgbotService.Stop()
 	}
 	var err1 error
 	var err2 error
