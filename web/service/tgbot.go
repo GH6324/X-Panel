@@ -1753,8 +1753,8 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 	 case "oneclick_switch_vision":
 		 t.deleteMessageTgBot(chatId, callbackQuery.Message.GetMessageID())
-		 t.sendCallbackAnswerTgBot(callbackQuery.ID, "🌀 Switch + vision Seed 协议组合的功能还在开发中 ...........")
-		 t.SendMsgToTgbot(chatId, "🌀 Switch + vision Seed 协议组合的功能还在开发中 ........，暂不可用...")
+		 t.sendCallbackAnswerTgBot(callbackQuery.ID, "🌀 Switch + Vision Seed 协议组合的功能还在开发中 ...........")
+		 t.SendMsgToTgbot(chatId, "🌀 Switch + Vision Seed 协议组合的功能还在开发中 ........，暂不可用...")
 		 t.remoteCreateOneClickInbound("switch_vision", chatId)	
 
 	 case "subconverter_install":
@@ -3126,9 +3126,9 @@ func (t *Tgbot) sendOneClickOptions(chatId int64) {
 		tu.InlineKeyboardRow(
 			tu.InlineKeyboardButton("🛡️ Vless Encryption + XHTTP + TLS").WithCallbackData(t.encodeQuery("oneclick_tls")),
 		),
-		// 【新增占位按钮】: 为未来的 Switch + vision Seed 预留位置
+		// 【新增占位按钮】: 为未来的 Switch + Vision Seed 预留位置
 		tu.InlineKeyboardRow(
-			tu.InlineKeyboardButton("🌀 Switch + vision Seed (开发中)").WithCallbackData(t.encodeQuery("oneclick_switch_vision")),
+			tu.InlineKeyboardButton("🌀 Switch + Vision Seed (开发中)").WithCallbackData(t.encodeQuery("oneclick_switch_vision")),
 		),
 	)
 	t.SendMsgToTgbot(chatId, "请选择您要创建的【一键配置】类型：\n（以下最前面两种适合优化线路去直连）", optionsKeyboard)
