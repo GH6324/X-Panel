@@ -82,7 +82,7 @@
 "settings" = "面板設定"
 "xray" = "Xray 設定"
 "logout" = "登出"
-"link" = "管理"
+"link" = "管理/設定資料庫"
 "navigation" = "實用導覽"
 
 [pages.login]
@@ -108,7 +108,7 @@
 "memory" = "記憶體"
 "hard" = "磁碟"
 "threads" = "執行緒"
-"xrayStatus" = "Xray"
+"xrayStatus" = "Xray 運作狀態"
 "stopXray" = "停止"
 "restartXray" = "重啟"
 "xraySwitch" = "版本"
