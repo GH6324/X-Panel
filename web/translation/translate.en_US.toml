@@ -81,7 +81,7 @@
 "settings" = "Panel Settings"
 "xray" = "Xray Configs"
 "logout" = "Log Out"
-"link" = "Manage"
+"link" = "Manage/Configure Database"
 "navigation" = "Practical Navigation"
 
 [pages.login]
@@ -106,7 +106,7 @@
 "storage" = "Storage"
 "memory" = "RAM"
 "threads" = "Threads"
-"xrayStatus" = "Xray"
+"xrayStatus" = "Xray Running Status"
 "stopXray" = "Stop"
 "restartXray" = "Restart"
 "xraySwitch" = "Version"
