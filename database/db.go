@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"slices"
+	"time"
 
 	"x-ui/config"
 	"x-ui/database/model"
@@ -36,6 +37,8 @@ func initModels() error {
 		&xray.ClientTraffic{},
 		&model.HistoryOfSeeders{},
 		&LinkHistory{},   // 把 LinkHistory 表也迁移
+		&ShortLink{},     // 新增 ShortLink 模型
+		&model.LotteryWin{}, 
 	}
 	for _, model := range models {
 		if err := db.AutoMigrate(model); err != nil {
@@ -185,4 +188,32 @@ func Checkpoint() error {
 		return err
 	}
 	return nil
+}
+
+// HasUserWonToday 检查指定用户今天是否已经中过奖
+// 〔中文注释〕:【修正】将 gorm.DB() 替换为全局变量 db
+func HasUserWonToday(userID int64) (bool, error) {
+	now := time.Now()
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	endOfDay := startOfDay.Add(24 * time.Hour)
+
+	var count int64
+	// 在 lottery_wins 表中查找符合条件（用户ID匹配且中奖日期在今天之内）的记录数量
+	err := db.Model(&model.LotteryWin{}).Where("user_id = ? AND win_date >= ? AND win_date < ?", userID, startOfDay, endOfDay).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+// RecordUserWin 记录用户的中奖信息
+// 〔中文注释〕:【修正】将 gorm.DB() 替换为全局变量 db
+func RecordUserWin(userID int64, prize string) error {
+	winRecord := &model.LotteryWin{
+		UserID:  userID,
+		Prize:   prize,
+		WinDate: time.Now(),
+	}
+	// 在 lottery_wins 表中创建一条新的记录
+	return db.Create(winRecord).Error
 }
