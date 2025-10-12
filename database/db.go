@@ -37,8 +37,7 @@ func initModels() error {
 		&xray.ClientTraffic{},
 		&model.HistoryOfSeeders{},
 		&LinkHistory{},   // 把 LinkHistory 表也迁移
-		&ShortLink{},     // 新增 ShortLink 模型
-		&model.LotteryWin{}, 
+		&model.LotteryWin{},  // 新增 抽奖游戏LotteryWin 数据模型
 	}
 	for _, model := range models {
 		if err := db.AutoMigrate(model); err != nil {
