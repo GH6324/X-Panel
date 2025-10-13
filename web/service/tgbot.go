@@ -87,6 +87,16 @@ var (
 
 var userStates = make(map[int64]string)
 
+// 〔中文注释〕: 贴纸的发送顺序将在运行时被随机打乱。
+var LOTTERY_STICKER_IDS = [3]string{
+	// STICKER_ID_1: 官方 Telegram Loading 动画 (经典)
+	"CAACAgIAAxkBAAIDxWX-R5hGfI9xXb6Q-iJ2XG8275TfAAI-BQACx0LhSb86q20xK0-rMwQ", 
+	// STICKER_ID_2: 官方 Telegram 思考/忙碌动画
+	"CAACAgIAAxkBAAIBv2X3F9c_pS8i0tF5N0Q-vF0Jc-oUAAJPAgACVwJpS2rN0xV8dFm2MwQ",
+	// STICKER_ID_3: 官方 Telegram 进度条动画
+	"CAACAgIAAxkBAAIB2GX3GNmXz18D2c9S-vF1X8X8ZgU9AALBAQACVwJpS_jH35KkK3y3MwQ",
+}
+
 type LoginStatus byte
 
 const (
@@ -1732,19 +1742,54 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 	// 〔中文注释〕: 新增 - 处理用户点击 "玩" 抽奖游戏
 	case "lottery_play":
+		// 确保本次 Shuffle 是随机的。
+		rng.Seed(time.Now().UnixNano()) 
+		chatId := callbackQuery.Message.GetChat().ID // 【确保 chatId 在函数开始时被初始化】
+		messageId := callbackQuery.Message.GetMessageID() // 获取原消息 ID
+		
 		// 〔中文注释〕: 首先，回应 TG 的回调请求，告诉用户机器人已收到操作。
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, "〔X-Panel 小白哥〕正在为您摇奖，请稍后......")
-
+		
 		// 这条消息会永久停留在聊天窗口，作为等待提示。
-        t.editMessageTgBot(
-            callbackQuery.Message.GetChat().ID, 
-            callbackQuery.Message.GetMessageID(), 
-        "⏳ **抽奖结果生成中...**\n\n请耐心等待 5 秒......\n\n〔X-Panel 小白哥〕马上为您揭晓！",
-        // 【关键】: 不传入键盘参数，自动移除旧键盘
-        )
-    
-        // 【保持】: 程序在此处暂停 5 秒
-        time.Sleep(5000 * time.Millisecond) 
+		t.editMessageTgBot(
+			chatId,
+			messageId,
+			"⏳ **抽奖结果生成中...**\n\n请耐心等待 5 秒......\n\n〔X-Panel 小白哥〕马上为您揭晓！",
+			// 【关键】: 不传入键盘参数，自动移除旧键盘
+		)
+
+		// --- 【发送动态贴纸（实现随机、容错、不中断）】 ---
+		var stickerMessageID int // 用于存储成功发送的贴纸消息 ID
+		
+        // 〔中文注释〕: 1. 将数组转换为可操作的切片
+		stickerIDsSlice := LOTTERY_STICKER_IDS[:] 
+
+		// 〔中文注释〕: 2. 随机化贴纸的发送顺序，确保每次动画不同。
+		// 注意: 依赖于文件头部导入的 rng "math/rand"
+		rng.Shuffle(len(stickerIDsSlice), func(i, j int) {
+			stickerIDsSlice[i], stickerIDsSlice[j] = stickerIDsSlice[j], stickerIDsSlice[i]
+		})
+        
+		// 〔中文注释〕: 3. 遍历随机化后的贴纸 ID，尝试发送，直到成功为止。
+		for _, stickerID := range stickerIDsSlice {
+			stickerMessage, err := t.SendStickerToTgbot(chatId, stickerID)
+			if err == nil {
+				// 成功发送，记录 ID 并跳出循环。
+				stickerMessageID = stickerMessage.MessageID
+				break
+			}
+			// 如果失败，记录日志并尝试下一个 ID。
+			logger.Warningf("尝试发送贴纸 %s 失败: %v", stickerID, err)
+		}
+		
+		// 【保持】: 程序在此处暂停 5 秒，用户可以看到动画。
+		time.Sleep(5000 * time.Millisecond)
+		
+		// 【新增：5秒后，删除动画贴纸】
+		if stickerMessageID != 0 {
+			// 〔中文注释〕: 抽奖结束后，删除刚才成功发送的动态贴纸消息。
+			t.deleteMessageTgBot(chatId, stickerMessageID)
+		}
     
         // 程序将在 5 秒后，继续执行下面的逻辑：
 		userID := callbackQuery.From.ID
@@ -1759,7 +1804,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 			if hasWon {
 				// 〔中文注释〕: 如果已经中奖，则告知用户并结束。
-				t.editMessageTgBot(chatId, callbackQuery.Message.GetMessageID(), "您今天已经中过奖啦，请明天再来！贪心可是不好的哦~")
+				t.editMessageTgBot(chatId, callbackQuery.Message.GetMessageID(), "您今天已经中过奖啦，请明天再来！\n\n贪心可是不好的哦~")
 				return
 			}
 
@@ -1769,7 +1814,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			// 〔中文注释〕: 如果中奖了（不是 "未中奖" 或 "错误"）。
 			if prize != "未中奖" && prize != "错误" {
 			// 〔中文注释〕: 拼接最终的中奖消息，包含兑奖说明。
-			finalMessage := resultMessage + "\n\n**兑奖说明**：请截图此消息，并联系管理员进行兑奖。\n\n〔X-Panel 面板〕交流群：https://t.me/XUI_CN"
+			finalMessage := resultMessage + "\n\n**兑奖说明**：请截图此消息，\n\n并联系管理员进行兑奖。\n\n〔X-Panel 面板〕交流群：\n\n--->> https://t.me/XUI_CN"
 					
 			// 〔中文注释〕: 记录中奖结果 (调用您在 database 中实现的函数)。
 			err := database.RecordUserWin(userID, prize)
@@ -2169,33 +2214,33 @@ func (t *Tgbot) runLotteryDraw() (prize string, message string) {
     }
 	roll := n.Int64()
 
-	// 〔中文注释〕: 设置不同奖项的中奖概率。
-	// 一等奖: 1/1000 (0.1%)
-	if roll < 1 { 
+	// 〔中文注释〕: 设置不同奖项的中奖概率。总中奖概率：3%+8%+12%+20%=43% 。
+	// 一等奖: 30/1000 (3%)
+	if roll < 30 {
 		prize = "一等奖"
 		message = "🎉 **天选之人！恭喜您抽中【一等奖】！** 🎉\n\n请联系管理员兑换神秘大奖！"
 		return
 	}
-    // 二等奖: 10/1000 (1%)
-	if roll < 11 { 
+	// 二等奖: 80/1000 (8%)，累计上限 110
+	if roll < 110 {
 		prize = "二等奖"
 		message = "🎊 **欧气满满！恭喜您抽中【二等奖】！** 🎊\n\n请联系管理员兑换牛逼奖品！"
 		return
 	}
-    // 三等奖: 50/1000 (5%)
-	if roll < 61 { 
+	// 三等奖: 120/1000 (12%)，累计上限 230
+	if roll < 230 {
 		prize = "三等奖"
 		message = "🎁 **运气不错！恭喜您抽中【三等奖】！** 🎁\n\n请联系管理员兑换小惊喜！"
 		return
 	}
-    // 安慰奖: 200/1000 (20%)
-	if roll < 261 { 
+	// 安慰奖: 200/1000 (20%)，累计上限 430
+	if roll < 430 {
 		prize = "安慰奖"
 		message = "👍 **重在参与！恭喜您抽中【安慰奖】！** 👍\n\n请联系管理员兑换鼓励奖！"
 		return
 	}
 
-	// 〔中文注释〕: 如果未中任何奖项。
+	// 〔中文注释〕: 如果未中任何奖项。未中奖概率 57% 。
 	prize = "未中奖"
 	message = "😕 **谢谢参与**倒霉的宝子。\n\n很遗憾，本次您未中奖，明天再来试试吧！"
 	return
@@ -2204,15 +2249,15 @@ func (t *Tgbot) runLotteryDraw() (prize string, message string) {
 // 〔中文注释〕: 新增函数，用于发送抽奖游戏邀请。
 func (t *Tgbot) sendLotteryGameInvitation() {
 	// 〔中文注释〕: 构建邀请消息和内联键盘。
-	msg := "🎰 **每日幸运抽奖游戏**\n\n-->您想试试今天的手气吗？"
+	msg := "-------🎉 福利区 🎉-------\n\n✨ **每日幸运抽奖游戏**\n\n-->您想试试今天的手气吗？"
 
 	// 〔中文注释〕: "lottery_play" 和 "lottery_skip" 将作为回调数据，用于后续处理。
 	inlineKeyboard := tu.InlineKeyboard(
 		tu.InlineKeyboardRow(
-			tu.InlineKeyboardButton("玩，我要赢奖品/萝莉！！！").WithCallbackData(t.encodeQuery("lottery_play")),
+			tu.InlineKeyboardButton("🤩玩，我要赢奖品/萝莉！！！").WithCallbackData(t.encodeQuery("lottery_play")),
 		),
 		tu.InlineKeyboardRow(
-			tu.InlineKeyboardButton("劳资不玩，我要看美图......").WithCallbackData(t.encodeQuery("lottery_skip")),
+			tu.InlineKeyboardButton("❌劳资不玩，我要看美图......").WithCallbackData(t.encodeQuery("lottery_skip")),
 		),
 	)
 
@@ -4660,4 +4705,25 @@ func (t *Tgbot) getNewsBriefingWithFallback() (string, error) {
 
 	// 所有来源都失败，返回一个友好的错误信息
 	return "", errors.New("所有新闻来源均获取失败，请检查网络或 API 状态")
+}
+
+// 【新增的辅助函数】: 发送贴纸到指定的聊天 ID，并返回消息对象（用于获取 ID）
+func (t *Tgbot) SendStickerToTgbot(chatId int64, fileId string) (*telego.Message, error) {
+	// 必须使用 SendStickerParams 结构体，并传入 context
+	params := telego.SendStickerParams{
+		ChatID: tu.ID(chatId),
+		// 对于现有 File ID 字符串，必须封装在 telego.InputFile 结构中。
+		Sticker: telego.InputFile{FileID: fileId}, 
+	}
+	
+	// 使用全局变量 bot 调用 SendSticker，并传入 context.Background() 和参数指针
+	msg, err := bot.SendSticker(context.Background(), &params)
+	
+	if err != nil {
+		logger.Errorf("发送贴纸失败到聊天 ID %d: %v", chatId, err)
+		return nil, err
+	}
+	
+	// 成功返回 *telego.Message 对象
+	return msg, nil
 }
