@@ -1794,9 +1794,11 @@ ${green}1、搬瓦工GIA高端线路：${yellow}https://bandwagonhost.com/aff.ph
 
 ${green}2、Dmit高端GIA线路：${yellow}https://www.dmit.io/aff.php?aff=9326${plain}
 
-${green}3、白丝云〔4837线路〕实惠量大管饱：${yellow}https://cloudsilk.io/aff.php?aff=706${plain}
+${green}3、Sharon亚太优化线路机：${yellow}https://gomami.io/aff.php?aff=174${plain}
 
-${green}4、RackNerd性价比机器：${yellow}https://my.racknerd.com/aff.php?aff=15268&pid=912${plain}
+${green}4、白丝云〔4837线路〕实惠量大管饱：${yellow}https://cloudsilk.io/aff.php?aff=706${plain}
+
+${green}5、RackNerd性价比机器：${yellow}https://my.racknerd.com/aff.php?aff=15268&pid=912${plain}
 
 ----------------------------------------------
 "
