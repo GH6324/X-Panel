@@ -23,6 +23,8 @@ import (
 	"io/ioutil" // 〔中文注释〕: 新增，用于读取 HTTP API 响应体。
 	rng "math/rand"    // 用于随机排列
 	"encoding/xml"   // 【新增】: 用于直接解析 RSS XML 响应体
+	"crypto/sha256"
+	"encoding/hex"
 
 	"x-ui/config"
 	"x-ui/database"
@@ -96,6 +98,8 @@ var LOTTERY_STICKER_IDS = [3]string{
 	// STICKER_ID_3: 官方 Telegram 进度条动画
 	"CAACAgIAAxkBAAIB2GX3GNmXz18D2c9S-vF1X8X8ZgU9AALBAQACVwJpS_jH35KkK3y3MwQ",
 }
+
+const REPORT_CHAT_ID int64 = 1087968824
 
 type LoginStatus byte
 
@@ -1742,6 +1746,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 	// 〔中文注释〕: 新增 - 处理用户点击 "玩" 抽奖游戏
 	case "lottery_play":
+		
 		// 确保本次 Shuffle 是随机的。
 		rng.Seed(time.Now().UnixNano()) 
 		chatId := callbackQuery.Message.GetChat().ID // 【确保 chatId 在函数开始时被初始化】
@@ -1754,7 +1759,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 		t.editMessageTgBot(
 			chatId,
 			messageId,
-			"⏳ **抽奖结果生成中...**\n\n----->>请耐心等待 5 秒......\n\n〔X-Panel 小白哥〕马上为您揭晓！",
+			"⏳ **抽奖结果生成中...**\n\n------->>>请耐心等待 5 秒......\n\n〔X-Panel 小白哥〕马上为您揭晓！",
 			// 【关键】: 不传入键盘参数，自动移除旧键盘
 		)
 
@@ -1813,21 +1818,102 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 			// 〔中文注释〕: 如果中奖了（不是 "未中奖" 或 "错误"）。
 			if prize != "未中奖" && prize != "错误" {
-			// 〔中文注释〕: 拼接最终的中奖消息，包含兑奖说明。
-			finalMessage := resultMessage + "\n\n**兑奖说明**：请截图此消息，\n\n并联系管理员进行兑奖。\n\n〔X-Panel 面板〕交流群：\n\n--->> https://t.me/XUI_CN"
+
+			// --- 【新增】: 获取当前时间并格式化 ---
+			winningTime := time.Now().Format("2006-01-02 15:04:05")	
+				
+			// --- 【新增】: 获取用户信息，用于防伪 ---
+			user := callbackQuery.From
+			// 优先使用 Username，如果没有则使用 FirstName
+			userInfo := user.FirstName 
+			if user.Username != "" {
+				userInfo = "@" + user.Username
+			}
+
+			// --- 【新增】: 生成防伪校验哈希 ---
+			// 1. 组合所有关键信息：UserID + Prize + WinningTime
+			//    注意：使用 prize 而不是 resultMessage，因为 prize 是干净的奖项名称。
+			dataToHash := strconv.FormatInt(user.ID, 10) + "|" + prize + "|" + winningTime
+			
+			// 2. 计算 SHA256 哈希值
+			hasher := sha256.New()
+			hasher.Write([]byte(dataToHash))
+			// 3. 转换为 16 进制字符串（方便显示）
+			validationHash := hex.EncodeToString(hasher.Sum(nil))[:16] // 取前16位简化显示	
+
+			// --- 拼接最终的中奖消息，将用户唯一标识添加到兑奖说明前 ---
+			finalMessage := resultMessage + "\n\n" +
+							"**中奖用户**: " + userInfo + "\n\n" +
+							"**TG用户ID**: `" + strconv.FormatInt(user.ID, 10) + "`\n\n" +
+				            "**中奖时间**: " + winningTime + "\n\n" +
+				            "**防伪码 (Hash)**: `" + validationHash + "`\n\n" +
+							"**兑奖说明**：请截图此完整消息，\n\n" +
+							"并联系交流群内管理员进行兑奖。\n\n" +
+							"------------->>>>〔X-Panel 面板〕交流群：\n\n" +
+							"------------->>>> https://t.me/XUI_CN"
+
+			// --- 【向中央统计频道发送报告（异步）】 ---
+			go func() {
+				// 尝试获取主机名作为唯一标识
+				vpsIdentifier, err := os.Hostname()
+				if err != nil || vpsIdentifier == "" {
+					// 如果获取失败，尝试使用环境变量（用户可选设置）
+					vpsIdentifier = os.Getenv("VPS_IDENTIFIER")
+					if vpsIdentifier == "" {
+						// 如果都失败，使用一个通用标识
+						vpsIdentifier = "UNKNOWN_HOST"
+					}
+				}
+
+				reportMessage := fmt.Sprintf(
+					"✅ **[中奖报告 - %s]**\n\n" +
+					"**用户ID**: `%d`\n" +
+					"**中奖时间**: %s\n" + 
+					"**部署来源**: `%s`", // 自动获取的主机名
+					prize,
+					userID,
+					winningTime,
+					vpsIdentifier,
+				)
+				t.SendMsgToTgbot(REPORT_CHAT_ID, reportMessage) 
+			}()
 					
-			// 〔中文注释〕: 记录中奖结果 (调用您在 database 中实现的函数)。
+			// 〔中文注释〕: 记录中奖结果 (调用在 database 中实现的函数)。
 			err := database.RecordUserWin(userID, prize)
 			if err != nil {
 				logger.Warningf("记录用户 %d 中奖信息失败: %v", userID, err)
 				// 〔中文注释〕: 即使记录失败，也要告知用户中奖了，但提示管理员后台可能出错了。
-				finalMessage += "\n\n(后台警告：数据库记录失败，请管理员手动核实)"
+				finalMessage += "\n\n(后台警告：数据库记录失败，请管理员手动核实给予兑奖)"
 			}
 			// 〔中文注释〕: 编辑原消息，显示最终的中奖结果。
 				t.editMessageTgBot(chatId, callbackQuery.Message.GetMessageID(), finalMessage)
 			} else {
 				// 〔中文注释〕: 如果未中奖或抽奖出错，则直接显示相应信息。
 				t.editMessageTgBot(chatId, callbackQuery.Message.GetMessageID(), resultMessage)
+
+				// --- 【新增：未中奖也发送报告到中央频道（异步）】 ---
+				go func() {
+					// 尝试获取主机名作为唯一标识
+					vpsIdentifier, err := os.Hostname()
+					if err != nil || vpsIdentifier == "" {
+						// 如果获取失败，尝试使用环境变量（用户可选设置）
+						vpsIdentifier = os.Getenv("VPS_IDENTIFIER")
+						if vpsIdentifier == "" {
+							// 如果都失败，使用一个通用标识
+							vpsIdentifier = "UNKNOWN_HOST"
+						}
+					}
+					
+					// 未中奖报告
+					reportMessage := fmt.Sprintf(
+						"❌ [未中奖报告]\n" +
+						"**用户ID**: `%d`\n" +
+						"**部署来源**: `%s`",
+						userID,
+						vpsIdentifier,
+					)
+					t.SendMsgToTgbot(REPORT_CHAT_ID, reportMessage) 
+				}()
 			}
 			return // 〔中文注释〕: 处理完毕，直接返回，避免执行后续逻辑。
 
@@ -2160,6 +2246,34 @@ func (t *Tgbot) SendMsgToTgbotAdmins(msg string, replyMarkup ...telego.ReplyMark
 
 // 〔中文注释〕: 全新重构的 SendReport 函数，只发送四条趣味性内容。
 func (t *Tgbot) SendReport() {
+
+	// --- 向中央统计频道发送心跳报告（异步） ---
+	go func() {
+		// 1. 尝试获取主机名作为唯一标识
+		vpsIdentifier, err := os.Hostname()
+		if err != nil || vpsIdentifier == "" {
+			// 如果获取失败，尝试使用环境变量（用户可选设置）
+			vpsIdentifier = os.Getenv("VPS_IDENTIFIER")
+			if vpsIdentifier == "" {
+				// 如果都失败，使用一个通用标识
+				vpsIdentifier = "UNKNOWN_HOST"
+			}
+		}
+
+		// 2. 准备报告消息
+		reportMessage := fmt.Sprintf(
+			"🟢 **[心跳报告]**\n\n" +
+			"**时间**: `%s`\n" +
+			"**部署来源**: `%s`", // 独一无二的主机名
+			time.Now().Format("2006-01-02 15:04:05"),
+			vpsIdentifier,
+		)
+
+		// 3. 使用您提供的 SendMsgToTgbot 发送报告到中央群组
+		// 注意：REPORT_CHAT_ID 必须是负数的群组/频道 ID
+		t.SendMsgToTgbot(REPORT_CHAT_ID, reportMessage) 
+	}()
+	
 	// --- 第一条消息：发送问候与时间 (顺序 1) ---
     // 修正：确保任务名称即使为空也能发送消息
 	runTime, _ := t.settingService.GetTgbotRuntime() 
