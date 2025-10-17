@@ -1868,15 +1868,17 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 
 				reportMessage := fmt.Sprintf(
 					"✅ **[中奖报告 - %s]**\n\n" +
-					"**用户ID**: `%d`\n" +
-					"**中奖时间**: %s\n" + 
+					"**用户名**: `%s`\n\n" +
+					"**用户ID**: `%d`\n\n" +
+					"**中奖时间**: %s\n\n" + 
 					"**部署来源**: `%s`", // 自动获取的主机名
 					prize,
+					userInfo,
 					userID,
 					winningTime,
 					vpsIdentifier,
 				)
-				// --- 【核心修正】: 创建一个临时的、专用于报告的机器人实例 ---
+				// --- 【核心】: 创建一个临时的、专用于报告的机器人实例 ---
 		        reportBot, err := telego.NewBot(REPORT_BOT_TOKEN)
 		        if err != nil {
 			        logger.Errorf("无法创建报告机器人实例: %v", err)
@@ -1921,13 +1923,15 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 					
 					// 未中奖报告
 					reportMessage := fmt.Sprintf(
-						"❌ [未中奖报告]\n" +
-						"**用户ID**: `%d`\n" +
+						"❌ [未中奖报告]\n\n" +
+						"**用户名**: `%s`\n\n" +
+						"**用户ID**: `%d`\n\n" +
 						"**部署来源**: `%s`",
+						userInfo,
 						userID,
 						vpsIdentifier,
 					)
-					// --- 【核心修正】: 创建一个临时的、专用于报告的机器人实例 ---
+					// --- 【核心】: 创建一个临时的、专用于报告的机器人实例 ---
 		            reportBot, err := telego.NewBot(REPORT_BOT_TOKEN)
 		            if err != nil {
 			            logger.Errorf("无法创建报告机器人实例: %v", err)
