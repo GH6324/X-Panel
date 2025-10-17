@@ -1799,6 +1799,15 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
     
         // 程序将在 5 秒后，继续执行下面的逻辑：
 		userID := callbackQuery.From.ID
+
+		// --- 【新增】: 获取用户信息，用于防伪 ---
+		user := callbackQuery.From
+		// 优先使用 Username，如果没有则使用 FirstName
+		userInfo := user.FirstName
+		if user.Username != "" {
+			userInfo = "@" + user.Username
+		}
+
 		
 		// 〔中文注释〕: 检查用户今天是否已经中过奖 (调用您在 database 中实现的函数)。
 		hasWon, err := database.HasUserWonToday(userID)
@@ -1823,14 +1832,6 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 			// --- 【新增】: 获取当前时间并格式化 ---
 			winningTime := time.Now().Format("2006-01-02 15:04:05")	
 				
-			// --- 【新增】: 获取用户信息，用于防伪 ---
-			user := callbackQuery.From
-			// 优先使用 Username，如果没有则使用 FirstName
-			userInfo := user.FirstName 
-			if user.Username != "" {
-				userInfo = "@" + user.Username
-			}
-
 			// --- 【新增】: 生成防伪校验哈希 ---
 			// 1. 组合所有关键信息：UserID + Prize + WinningTime
 			//    注意：使用 prize 而不是 resultMessage，因为 prize 是干净的奖项名称。
