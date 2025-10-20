@@ -599,7 +599,7 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 				),
 			)
 			// 〔中文注释〕: 从您提供的需求中引用提示文本
-			t.SendMsgToTgbot(chatId, "🤔 您确定要重启〔X-Panel 面板〕服务吗？\n\n这也会同时重启Xray Core，\n\n会使面板在短时间内无法访问。", confirmKeyboard)
+			t.SendMsgToTgbot(chatId, "🤔 您确定要重启〔X-Panel 面板〕服务吗？\n\n这也会同时重启 Xray Core，\n\n会使面板在短时间内无法访问。", confirmKeyboard)
 		} else {
 			handleUnknownCommand()
 		}	
@@ -2040,7 +2040,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 				tu.InlineKeyboardButton("❌ 否，我再想想").WithCallbackData(t.encodeQuery("restart_panel_cancel")),
 			),
 		)
-		t.SendMsgToTgbot(chatId, "🤔 您确定要重启〔X-Panel 面板〕服务吗？\n\n这也会同时重启Xray Core，\n\n会使面板在短时间内无法访问。", confirmKeyboard)
+		t.SendMsgToTgbot(chatId, "🤔 您确定要重启〔X-Panel 面板〕服务吗？\n\n这也会同时重启 Xray Core，\n\n会使面板在短时间内无法访问。", confirmKeyboard)
 
 	case "restart_panel_confirm":
 		// 〔中文注释〕: 用户确认重启
@@ -3690,11 +3690,11 @@ func (t *Tgbot) remoteCreateOneClickInbound(configType string, chatId int64) {
 	// 【新增功能】：发送用法说明消息
     // 使用 ** 粗体标记，并使用多行字符串确保换行显示。
     usageMessage := `**用法说明：**
-该功能已自动生成现今比较主流的入站协议，简单/直接，不用慢慢配置。
-【一键配置】生成功能中的最前面两种协议组合，适合【优化线路】去直连使用。
-并随机分配一个可用端口，请确保此端口放行，生成后请直接复制【**链接地址**】。
-TG端 的【一键配置】生成功能，与后台 Web端 类似，跟【入站】的数据是打通的。
-你可以在一键创建后于列表中，手动查看/复制或编辑详细信息，以便添加其他参数。`
+1、该功能已自动生成现今比较主流的入站协议，简单/直接，不用慢慢配置。
+2、【一键配置】生成功能中的最前面两种协议组合，适合【优化线路】去直连使用。
+3、并随机分配一个可用端口，请确保此端口放行，生成后请直接复制【**链接地址**】。
+4、TG端 的【一键配置】生成功能，与后台 Web端 类似，跟【入站】的数据是打通的。
+5、你可以在一键创建后于列表中，手动查看/复制或编辑详细信息，以便添加其他参数。`
 	
     t.SendMsgToTgbot(chatId, usageMessage)
 }
