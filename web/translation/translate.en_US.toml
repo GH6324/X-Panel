@@ -317,7 +317,7 @@
 "clickToCopyHint" = "(Click on the image to copy)"
 "linkCreated" = "The inbound link has been created, please copy the following address:"
 "descriptionTitle" = "\r\n\r\nUsage notes"
-"descriptionContent" = "This function will automatically generate inbound connections for the VLESS + TCP + Reality (xtls-rprx-vision) and VLESS + XHTTP + Reality protocols. The first two combinations are suitable for direct connections.\r\nOr for VLESS Encryption + XHTTP + TLS (with optional CDN) protocols.\r\nAnd randomly assign an available port. Please ensure that this port is open. After generating, please copy the [Link Address] directly.\r\nThe [One-Click Configuration] generation function here is connected to the [Inbound] data.\r\nAfter one-click creation, you can manually view/copy or edit the details in the list to add other parameters."
+"descriptionContent" = "1.This function will automatically generate inbound connections for the VLESS + TCP + Reality (xtls-rprx-vision) and VLESS + XHTTP + Reality protocols. The first two combinations are suitable for direct connections.\r\n2.Or for VLESS Encryption + XHTTP + TLS (with optional CDN) protocols.\r\n3.And randomly assign an available port. Please ensure that this port is open. After generating, please copy the [Link Address] directly.\r\n4.The [One-Click Configuration] generation function here is connected to the [Inbound] data.\r\n5.After one-click creation, you can manually view/copy or edit the details in the list to add other parameters."
 
 [pages.inbounds.oneClick.preset]
 "vless_reality" = "VLESS + TCP + Reality + Vision"
