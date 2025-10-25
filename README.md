@@ -21,7 +21,7 @@
   </a>
 </p>
 
-- 赞助地址（USDT）：
+- “支持项目”赞助地址（USDT）：
 - TRC20 ---->>> `TYQEmQp1P65u9bG7KPehgJdvuokfb72YkZ`
 - Polygon ---->>> `0xd20eBE429c2398793178e015B2ca1Dc42601f3Eb`
 - Solana ---->>> `7qVEZuV98QTDN5qUmsFwvqTSvkYpmLtNf8o1sh1mppwR`
