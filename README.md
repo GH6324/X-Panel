@@ -142,10 +142,10 @@ apt update -y&&apt install -y curl&&apt install -y socat
 
 ## 安装指定版本
 
-若要安装指定的版本，请使用以下安装命令。 e.g., ver `v25.9.20`:
+若要安装指定的版本，请使用以下安装命令。 e.g., ver `v25.9.25`:
 
 ```
-VERSION=v25.9.20 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-panel/$VERSION/install.sh") $VERSION
+VERSION=v25.9.25 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-panel/$VERSION/install.sh") $VERSION
 ```
 ------------
 ## 若你的VPS默认有防火墙，请在安装完成之后放行指定端口
@@ -173,7 +173,7 @@ VERSION=v25.9.20 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-
 ![58](./media/58.png)
 
 ------------
-## 如何在〔X-Panel面板〕中进行【抽奖游戏】赢奖品？
+## 如何在〔X-Panel 项目〕中进行【抽奖游戏】赢奖品？
 #### 1、必须绑定好【TG端机器人】，怎么绑定？去看下面“绑定机器人”那部分教程，
 #### 2、在【TG端】直接点击【娱乐抽奖】菜单，就会弹出【每日幸运】抽奖游戏，
 ![59](./media/59.png)
