@@ -21,7 +21,7 @@
   </a>
 </p>
 
-- 赞助地址（USDT）：
+- “支持项目”赞助地址（USDT）：
 - TRC20 ---->>> `TYQEmQp1P65u9bG7KPehgJdvuokfb72YkZ`
 - Polygon ---->>> `0xd20eBE429c2398793178e015B2ca1Dc42601f3Eb`
 - Solana ---->>> `7qVEZuV98QTDN5qUmsFwvqTSvkYpmLtNf8o1sh1mppwR`
@@ -38,17 +38,19 @@
 ##### ②管理后台进行了相应的〔图标和按钮〕汉化，让中文宝宝能够看得懂，
 ##### ③安装成功后〔自动更改〕后台管理界面和电报机器人界面默认为〔中文〕，
 ##### ④在管理后台中〔设置证书处〕，增加了acme方式填入路径的提示；
-#### 2、为了保证登录面板的安全性，脚本强制〔ssh转发〕；
+#### 2、为了保证登录面板的安全性，脚本强制 “https”〔ssh转发〕；
 #### 3、新增〔设备限制〕功能，可配合脚本中的〔IPlimit〕使用；
 #### 4、新增〔订阅转换〕功能，进入脚本用选项【25】去安装使用；
-#### 5、新增〔一键配置〕功能，进入后台在【添加入站】处即可使用；
-#### 6、创建了〔X-Panel面板〕交流群，各位中文宝宝可以一起讨论交流；
-#### 7、管理后台中增加了〔实用导航〕页面，里面包含实用内容；
-#### 8、优化了后台〔二维码〕显示模式，点击打开会更加丝滑美观；
-#### 9、在创建reality协议时，更改uTLS指纹默认使用chrome；更改默认目标网站为tesla.com；
-#### 10、更新README内容添加备份&恢复操作说明，以及更多其他图文介绍；
-#### 11、管理后台中增加〔端口检测〕和〔网络测速〕，点击可以跳转直达；
-#### 12、增加了详细的项目〔安装配置教程〕，解决小白用户不懂配置的烦恼。
+#### 5、新增〔一键配置〕功能，在【TG端】和面板后台都可去使用；
+#### 6、〔一键配置〕功能，已经实现【三端打通】，简单直接，快捷配置；
+#### 7、新增〔TG端机器人〕--->>【抽奖游戏】，每日幸运抽奖全凭手气；
+#### 8、创建了〔X-Panel面板〕交流群，各位中文宝宝可以一起讨论交流；
+#### 9、管理后台中增加了〔实用导航〕页面，里面包含实用内容；
+#### 10、优化了后台〔二维码〕显示模式，点击打开会更加丝滑美观；
+#### 11、在创建reality协议时，更改uTLS指纹默认使用chrome；更改默认目标网站为tesla.com；
+#### 12、更新README内容添加备份&恢复操作说明，以及更多其他图文介绍；
+#### 13、管理后台中增加〔端口检测〕和〔网络测速〕，点击可以跳转直达；
+#### 14、增加了详细的项目〔安装配置教程〕，解决小白用户不懂配置的烦恼。
 
 ------------
 ## ✰你必须要看的【重要安全提示/警告】✰
@@ -140,10 +142,10 @@ apt update -y&&apt install -y curl&&apt install -y socat
 
 ## 安装指定版本
 
-若要安装指定的版本，请使用以下安装命令。 e.g., ver `v25.9.20`:
+若要安装指定的版本，请使用以下安装命令。 e.g., ver `v25.9.25`:
 
 ```
-VERSION=v25.9.20 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-panel/$VERSION/install.sh") $VERSION
+VERSION=v25.9.25 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-panel/$VERSION/install.sh") $VERSION
 ```
 ------------
 ## 若你的VPS默认有防火墙，请在安装完成之后放行指定端口
@@ -163,6 +165,22 @@ VERSION=v25.9.20 && bash <(curl -Ls "https://raw.githubusercontent.com/xeefei/x-
 ![54](./media/54.png)
 #### 3、直接复制【链接】，导入软件；放行【相应端口】，去【入站列表】点击【启用】。
 ![55](./media/55.png)
+#### 4、若你是用【TG端电报机器人】的【一键配置】生成功能，那直接点击就用，
+![56](./media/56.png)
+#### 5、选择好自己想要【一键创建】的协议组合类型，点击之后稍作等待，
+![57](./media/57.png)
+#### 6、TG端【一键配置】创建成功之后，二维码和链接地址机器人会发送给你，如下：
+![58](./media/58.png)
+
+------------
+## 如何在〔X-Panel 项目〕中进行【抽奖游戏】赢奖品？
+#### 1、必须绑定好【TG端机器人】，怎么绑定？去看下面“绑定机器人”那部分教程，
+#### 2、在【TG端】直接点击【娱乐抽奖】菜单，就会弹出【每日幸运】抽奖游戏，
+![59](./media/59.png)
+#### 3、点击【进行抽奖】，就可“全凭手气”得到随机的抽奖结果，如下图所示，
+![60](./media/60.png)
+#### 4、在你【中奖】之后，截完整的“中奖页面”图片给交流群内管理员，即可兑奖。
+![61](./media/61.png)
 
 ------------
 ## 安装证书开启https方式实现域名登录访问管理面板/----->>偷自己
@@ -814,7 +832,10 @@ XUI_BIN_FOLDER="bin" XUI_DB_FOLDER="/etc/x-ui" go build main.go
 - 如果你觉得本项目对你有用，而且你也恰巧有这方面的需求，你也可以选择通过我的购买链接赞助我。
 - [1、搬瓦工GIA高端线路，仅推荐购买GIA套餐：https://bandwagonhost.com/aff.php?aff=75015](https://bandwagonhost.com/aff.php?aff=75015)
 - [2、Dmit高端GIA线路：https://www.dmit.io/aff.php?aff=9326](https://www.dmit.io/aff.php?aff=9326)
-- [3、白丝云【4837线路】实惠量大管饱：https://cloudsilk.io/aff.php?aff=706](https://cloudsilk.io/aff.php?aff=706)
+- [3、Sharon亚太优化线路机：https://gomami.io/aff.php?aff=174](https://gomami.io/aff.php?aff=174)
+- [4、Bagevm优质落地鸡（原生IP全解锁）：https://www.bagevm.com/aff.php?aff=754](https://www.bagevm.com/aff.php?aff=754)
+- [5、白丝云【4837线路】实惠量大管饱：https://cloudsilk.io/aff.php?aff=706](https://cloudsilk.io/aff.php?aff=706)
+- [6、RackNerd极致性价比机器：https://my.racknerd.com/aff.php?aff=15268&pid=912](https://my.racknerd.com/aff.php?aff=15268&pid=912)
 
 ------------
 ## 特别感谢
