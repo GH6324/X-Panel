@@ -22,10 +22,13 @@ plain='\033[0m'
 install_paid_version() {
     echo ""
     echo -e "${green}您选择了安装 【X-Panel 付费Pro版】${plain}"
+    echo ""
     echo -e "${yellow}------------------------------------------------------${plain}"
+    echo ""
 
     # 1. 提示用户输入授权码
     read -p "$(echo -e "${yellow}请输入您的授权码 (License Key): ${plain}")" auth_key
+    echo ""
     
     if [ -z "$auth_key" ]; then
         echo -e "${red}错误: 您没有输入授权码。${plain}"
