@@ -32,6 +32,7 @@ else
   RED=""
   RESET=""
 fi
+echo ""
 printf "%b\n\n" "${RED}〔X-Panel 面板〕专属 “服务器 DNS 检测”${RESET}"
 
 # extract valid IPs (IPv4 strict / IPv6 loose)
@@ -283,4 +284,5 @@ else
       "$idx0" "$ip" "$region" "$asn" "$company" \
       "$loss" "$min" "$avg" "$max" "$mdev"
   done
+
 fi
