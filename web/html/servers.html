@@ -254,13 +254,10 @@
     </a-modal>
 
 </a-layout>
-{{ template "page/body_end" .}}
 
 {{template "page/body_scripts" .}}
 {{template "component/aSidebar" .}}
 {{template "component/aThemeSwitch" .}}
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
     // 初始化 Vue 实例
@@ -440,6 +437,7 @@
                     ]),
                     onOk() {}
                 });
+			},
 
             // 删除服务器
             deleteServer(record) {
@@ -460,3 +458,4 @@
         }
     });
 </script>
+{{ template "page/body_end" .}}
