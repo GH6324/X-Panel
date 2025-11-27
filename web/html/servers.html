@@ -272,6 +272,19 @@
             loading: false,
             modalLoading: false,
             visible: false,
+			checkModalVisible: false,
+            resultModalVisible: false,
+            resultTitle: '部署结果',
+            resultSubtitle: '',
+            resultLink: '',
+			
+			checkList: [],
+            checkColumns: [
+                { title: 'ID', dataIndex: 'ID', key: 'ID', width: 60 },
+                { title: '节点名称', dataIndex: 'name', key: 'name' },
+                { title: '状态', key: 'status', scopedSlots: { customRender: 'status' } },
+                { title: '操作', key: 'action', scopedSlots: { customRender: 'action' }, align: 'right' }
+            ],
 
             servers: [],
             // 【修改这里】：定义两个独立的计数变量
@@ -452,6 +465,19 @@
                 this.$message.warning("免费版不支持此操作");
                 return; 
             },
+			copyLink() {
+                if(!this.resultLink) return;
+                const input = document.createElement('input');
+                input.value = this.resultLink;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('Copy');
+                document.body.removeChild(input);
+                this.$message.success('复制成功');
+            },
+            performPing(record) {
+                 // 占位
+            }
         },
         mounted() {
             this.getServers();
