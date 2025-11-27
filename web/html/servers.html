@@ -384,14 +384,14 @@
             // 【拦截方法】：拦截获取链接操作
             getLastLink(record) {
                  // 【免费版】：拦截获取链接操作
-                this.$message.warning("免费版不支持此操作");
+                this.$message.warning("〔免费基础版〕不支持此操作");
                 return;
             },
 
              // 执行一键中转部署
             async setupRelay(record) {
                  // 【免费版修改】：拦截部署操作
-                this.$message.warning("免费版不支持此操作");
+                this.$message.warning("〔免费基础版〕不支持此操作");
                 return;
             },
 
@@ -440,29 +440,49 @@
                 this.$warning({
                     title: '功能受限提示',
                     okText: '知道了',
+                    // 【核心修改点 1】：调整弹窗宽度，使其足够容纳一行文字
+                    width: 580, 
                     // 这里定义提示框的具体内容和样式
-                    content: h('div', { style: 'margin-top: 10px; font-size: 15px;' }, [
-                        h('p', '此项功能是“付费Pro版”专属功能，免费版不能用，'),
-                        h('br'), // 换行
-                        h('p', '请联系面板管理员〔购买授权码〕之后才能继续使用。'),
-                        h('br'), // 换行
-                        h('p', { style: 'color: #ff4d4f; font-weight: bold;' }, '----->>> 面板管理员私聊机器人：@is_Chat_Bot'),
+                    content: h('div', { style: 'margin-top: 10px; font-size: 15px; line-height: 1.6;' }, [ // 增加行高，提升阅读体验
+                        
+                        // 第一段：设置底部外边距，模拟空行
+                        h('p', { style: 'margin-bottom: 15px;' }, '此项功能是“付费Pro版”专属功能，免费版不能用，'), 
+                        
+                        // 第二段：设置底部外边距，模拟空行
+                        h('p', { style: 'margin-bottom: 15px;' }, '请联系面板管理员〔购买授权码〕之后才能继续使用。'), 
+                        
+                        // 第三段：TG 链接（无需底部外边距）
+                        h('p', { style: 'color: #ff4d4f; font-weight: bold; margin-bottom: 0;' }, [
+                            '----->>> 面板管理员私聊机器人：',
+                            h('a', { 
+                                // 设置跳转链接到 Telegram
+                                attrs: { 
+                                    href: 'https://t.me/is_Chat_Bot', 
+                                    target: '_blank' // 在新标签页打开
+                                }, 
+                                style: { 
+                                    color: '#1890ff', // 链接颜色
+                                    fontWeight: 'bold',
+                                    textDecoration: 'underline' // 链接下划线
+                                } 
+                            }, '@is_Chat_Bot')
+                        ]),
                     ]),
                     onOk() {}
                 });
-			},
+            },
 
             // 删除服务器
             deleteServer(record) {
                 // 【免费版修改】：拦截删除操作
-                this.$message.warning("免费版不支持此操作");
+                this.$message.warning("〔免费基础版〕不支持此操作");
                 return; 
             },
 
              // 【拦截方法】：拦截【检测中转节点】操作
             openCheckModal() {
                 // 【免费版修改】：拦截【检测中转节点】操作
-                this.$message.warning("免费版不支持此操作");
+                this.$message.warning("〔免费基础版〕不支持此操作");
                 return; 
             },
 			copyLink() {
