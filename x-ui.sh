@@ -822,6 +822,8 @@ install_acme() {
 
 # 【中文注释】：“备用方式申请证书”函数
 ssl_cert_issue_standalone_embedded() {
+    local existing_webBasePath=$(/usr/local/x-ui/x-ui setting -show true | grep -Eo 'webBasePath（访问路径）: .+' | awk '{print $2}')
+    local existing_port=$(/usr/local/x-ui/x-ui setting -show true | grep -Eo 'port（端口号）: .+' | awk '{print $2}')
     echo ""
     echo -e "${yellow}=== 备用方式申请 SSL 证书 (Standalone 模式) ===${plain}"
     echo ""
@@ -992,6 +994,11 @@ ssl_cert_issue_standalone_embedded() {
             echo "  - 证书路径：$webCertFile"
             echo ""
             echo "  - 私钥路径：$webKeyFile"
+            echo ""
+            echo -e "${green}登录访问面板URL: https://${domain}:${existing_port}${green}${existing_webBasePath}${plain}"
+            echo ""
+            echo -e "${green}PS：若您要登录访问面板，请复制上面的地址到浏览器打开即可${plain}"
+            echo ""
             
             # 重启面板以生效
             if command -v restart >/dev/null 2>&1; then
@@ -1068,6 +1075,8 @@ ssl_cert_issue_main() {
         ;; 
     4) 
         # 【功能：自定义证书路径】
+        local existing_webBasePath=$(/usr/local/x-ui/x-ui setting -show true | grep -Eo 'webBasePath（访问路径）: .+' | awk '{print $2}')
+        local existing_port=$(/usr/local/x-ui/x-ui setting -show true | grep -Eo 'port（端口号）: .+' | awk '{print $2}')
         echo ""
         echo -e "${yellow}您选择了“手动上传证书”去自定义路径${plain}"
         echo ""
@@ -1109,6 +1118,11 @@ ssl_cert_issue_main() {
                 echo "  - 证书文件：$webCertFile"
                 echo ""
                 echo "  - 私钥文件：$webKeyFile"
+                echo ""
+                echo -e "${green}登录访问面板URL: https://${domain}:${existing_port}${green}${existing_webBasePath}${plain}"
+                echo ""
+                echo -e "${green}PS：若您要登录访问面板，请复制上面的地址到浏览器打开即可${plain}"
+                echo ""
                 
                 # 只有文件确认无误，才执行重启
                 restart
