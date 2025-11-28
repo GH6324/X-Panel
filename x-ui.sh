@@ -1068,6 +1068,7 @@ ssl_cert_issue_main() {
         ;; 
     4) 
         # 【功能：自定义证书路径】
+        echo ""
         echo -e "${yellow}您选择了“手动上传证书”去自定义路径${plain}"
         echo ""
         echo -e "${red}请您务必先以〔root用户〕上传您的证书文件${plain}"
