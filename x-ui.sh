@@ -1071,7 +1071,7 @@ ssl_cert_issue_main() {
         echo ""
         echo -e "${yellow}您选择了“手动上传证书”去自定义路径${plain}"
         echo ""
-        echo -e "${red}请您务必先以〔root用户〕上传您的证书文件${plain}"
+        echo -e "${red}请您务必先以〔“root”用户〕上传您的证书文件${plain}"
         echo ""
         read -rp "请输入您的域名: " domain
         echo ""
