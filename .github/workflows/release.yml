@@ -87,8 +87,8 @@ jobs:
           # 3. 移除 -tiny 以提高兼容性 (如果成功了，下次可以再加回去)
           # 4. 添加 -x 参数以打印详细日志，方便排错
           # ===============================================================
-          # $(go env GOPATH)/bin/garble build -ldflags "-w -s" -o xui-release -v -x ./
-          $(go env GOPATH)/bin/garble -tiny build -ldflags "-w -s" -o xui-release -v -x ./
+          $(go env GOPATH)/bin/garble build -ldflags "-w -s" -o xui-release -v -x ./
+
 
           # 验证生成的文件
           ls -lh xui-release
