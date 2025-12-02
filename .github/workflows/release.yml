@@ -57,7 +57,9 @@ jobs:
           # 〔中文注释〕: 安装 garble 工具
           go install mvdan.cc/garble@latest
           # 〔中文注释〕: 将 garble 的安装路径添加到 PATH，以确保它能在后续步骤中被调用
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          # 验证安装是否成功，并打印路径
+          echo "Garble installed at: $(go env GOPATH)/bin/garble"
+          $(go env GOPATH)/bin/garble version
 
       - name: Build X-Panel for Linux
         run: |
@@ -76,14 +78,20 @@ jobs:
           esac
 
           # 打印环境信息以便调试
-          echo "Building for GOOS=$GOOS GOARCH=$GOARCH GOARM=$GOARM"
+          echo "🚀 Start Building for GOOS=$GOOS GOARCH=$GOARCH GOARM=$GOARM..."
+          
+          # ===============================================================
+          # 【核心修复】
+          # 1. 使用 $(go env GOPATH)/bin/garble 确保绝对路径调用
+          # 2. 将编译目标 main.go 改为 ./ (编译整个包，防止漏掉同级文件)
+          # 3. 移除 -tiny 以提高兼容性 (如果成功了，下次可以再加回去)
+          # 4. 添加 -x 参数以打印详细日志，方便排错
+          # ===============================================================
+          # $(go env GOPATH)/bin/garble build -ldflags "-w -s" -o xui-release -v -x ./
+          $(go env GOPATH)/bin/garble -tiny build -ldflags "-w -s" -o xui-release -v -x ./
 
-          # ===============================================================
-          # 【修改】使用 garble 进行混淆编译，替换原有的 go build
-          # -tiny: 优化体积并增强混淆，由于 CC 环境变量已设置，garble 会自动使用交叉编译器
-          # 注意：garble 也会处理 -ldflags 参数
-          # ===============================================================
-          garble -tiny build -ldflags "-w -s" -o xui-release -v main.go
+          # 验证生成的文件
+          ls -lh xui-release
 
           file xui-release
           ldd xui-release || echo "Static binary confirmed"
@@ -145,7 +153,7 @@ jobs:
         with:
           name: x-ui-linux-${{ matrix.platform }}
           path: ./x-ui-linux-${{ matrix.platform }}.tar.gz
-          retention-days: 1   # <--- 【在这里添加这行】强制只保留1天
+          retention-days: 1   # <--- 强制只保留1天
 
       - name: Upload files to GH release
         uses: svenstaro/upload-release-action@v2
@@ -155,7 +163,7 @@ jobs:
           tag: ${{ github.ref }}
           file: x-ui-linux-${{ matrix.platform }}.tar.gz
           asset_name: x-ui-linux-${{ matrix.platform }}.tar.gz
-          # 如果你希望这是预发布版本，可以此行注释
+          # 如果这是预发布版本，可以此行注释
           prerelease: true  
 
   # ===============================================================
@@ -222,7 +230,7 @@ jobs:
           cd x-ui\bin
           
           # 〔中文注释〕: 下载 Windows 版本的 Xray-core 依赖
-          # 注意：这里的 Xray 版本号 (v25.10.15) 我沿用了你 Linux 脚本中的版本，你可以根据需要修改
+          # 注意：这里的 Xray 版本号 (v25.10.15) 沿用 Linux 脚本中的版本
           $Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v25.10.15/"
           if ("${{ matrix.platform }}" -eq "amd64") {
             # Invoke-WebRequest 是 PowerShell 的下载命令，等同于 wget
@@ -273,7 +281,7 @@ jobs:
           name: x-ui-windows-${{ matrix.platform }}
           # 〔中文注释〕: 上传的压缩包路径
           path: ./x-ui-windows-${{ matrix.platform }}.zip
-          retention-days: 1   # <--- 【在这里添加这行】强制只保留1天
+          retention-days: 1   # <--- 强制只保留1天
 
       - name: Upload files to GH release
         uses: svenstaro/upload-release-action@v2
