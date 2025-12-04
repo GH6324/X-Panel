@@ -665,6 +665,7 @@
 "day" = "天"
 "days" = "天"
 "hours" = "小时"
+"minutes" = "分钟"
 "unknown" = "未知"
 "inbounds" = "入站连接"
 "clients" = "客户端"
