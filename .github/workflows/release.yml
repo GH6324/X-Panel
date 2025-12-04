@@ -27,8 +27,6 @@ jobs:
     permissions:
       contents: write
     strategy:
-      # 【新增】设置为 false，这样某个架构失败不会导致其他架构被取消
-      fail-fast: false
       matrix:
         platform:
           - amd64
@@ -36,8 +34,8 @@ jobs:
           - armv7
           - armv6
           - 386
-          - s390x
           - armv5
+          - s390x
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -49,46 +47,35 @@ jobs:
           go-version-file: go.mod
           check-latest: true
 
-      # ===============================================================
-      # 【修改】新增步骤：安装 garble 混淆工具
-      # ===============================================================
-      - name: Install Garble (Obfuscator)
-        run: |
-          # 〔中文注释〕: 安装 garble 工具
-          go install mvdan.cc/garble@latest
-          # 〔中文注释〕: 将 garble 的安装路径添加到 PATH，以确保它能在后续步骤中被调用
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
-
       - name: Build X-Panel for Linux
         run: |
-          # ===============================================================
-          # 使用纯 Go 环境 + Garble 进行跨平台静态编译
-          # ===============================================================
-          export CGO_ENABLED=0
+          export CGO_ENABLED=1
           export GOOS=linux
           export GOARCH=${{ matrix.platform }}
-
-          # 针对特殊架构设置 GOARM 环境变量
+          # Use Bootlin prebuilt cross-toolchains (musl 1.2.5 in stable series)
           case "${{ matrix.platform }}" in
-            armv7) export GOARM=7 ;;
-            armv6) export GOARM=6 ;;
-            armv5) export GOARM=5 ;;
+            amd64) BOOTLIN_ARCH="x86-64" ;;
+            arm64) BOOTLIN_ARCH="aarch64" ;;
+            armv7) BOOTLIN_ARCH="armv7-eabihf"; export GOARCH=arm GOARM=7 ;;
+            armv6) BOOTLIN_ARCH="armv6-eabihf"; export GOARCH=arm GOARM=6 ;;
+            armv5) BOOTLIN_ARCH="armv5-eabi"; export GOARCH=arm GOARM=5 ;;
+            386) BOOTLIN_ARCH="x86-i686" ;;
+            s390x) BOOTLIN_ARCH="s390x-z13" ;;
           esac
-
-          # 打印环境信息以便调试
-          echo "Building for GOOS=$GOOS GOARCH=$GOARCH GOARM=$GOARM"
-
-          # ===============================================================
-          # 【修改】使用 garble 进行混淆编译，替换原有的 go build
-          # -tiny: 优化体积并增强混淆，由于 CC 环境变量已设置，garble 会自动使用交叉编译器
-          # 注意：garble 也会处理 -ldflags 参数
-          # ===============================================================
-          # 注意：garble 需要用到 go 工具链，确保环境路径正确
-          export PATH=$PATH:$(go env GOPATH)/bin
-          
-          echo "Building with Garble obfuscation..."
-          garble -tiny -literals -seed=random build -ldflags "-w -s -linkmode external -extldflags '-static'" -o xui-release -v main.go
-
+          echo "Resolving Bootlin musl toolchain for arch=$BOOTLIN_ARCH (platform=${{ matrix.platform }})"
+          TARBALL_BASE="https://toolchains.bootlin.com/downloads/releases/toolchains/$BOOTLIN_ARCH/tarballs/"
+          TARBALL_URL=$(curl -fsSL "$TARBALL_BASE" | grep -oE "${BOOTLIN_ARCH}--musl--stable-[^\"]+\\.tar\\.xz" | sort -r | head -n1)
+          [ -z "$TARBALL_URL" ] && { echo "Failed to locate Bootlin musl toolchain for arch=$BOOTLIN_ARCH" >&2; exit 1; }
+          echo "Downloading: $TARBALL_URL"
+          cd /tmp
+          curl -fL -sS -o "$(basename "$TARBALL_URL")" "$TARBALL_BASE/$TARBALL_URL"
+          tar -xf "$(basename "$TARBALL_URL")"
+          TOOLCHAIN_DIR=$(find . -maxdepth 1 -type d -name "${BOOTLIN_ARCH}--musl--stable-*" | head -n1)
+          export PATH="$(realpath "$TOOLCHAIN_DIR")/bin:$PATH"
+          export CC=$(realpath "$(find "$TOOLCHAIN_DIR/bin" -name '*-gcc.br_real' -type f -executable | head -n1)")
+          [ -z "$CC" ] && { echo "No gcc.br_real found in $TOOLCHAIN_DIR/bin" >&2; exit 1; }
+          cd -
+          go build -ldflags "-w -s -linkmode external -extldflags '-static'" -o xui-release -v main.go
           file xui-release
           ldd xui-release || echo "Static binary confirmed"
           
@@ -101,7 +88,7 @@ jobs:
           cd x-ui/bin
           
           # Download dependencies
-          Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v25.10.15/"
+          Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v25.12.2/"
           if [ "${{ matrix.platform }}" == "amd64" ]; then
             wget -q ${Xray_URL}Xray-linux-64.zip
             unzip Xray-linux-64.zip
@@ -149,7 +136,6 @@ jobs:
         with:
           name: x-ui-linux-${{ matrix.platform }}
           path: ./x-ui-linux-${{ matrix.platform }}.tar.gz
-          retention-days: 1   # <--- 强制只保留1天
 
       - name: Upload files to GH release
         uses: svenstaro/upload-release-action@v2
@@ -187,17 +173,6 @@ jobs:
           go-version-file: go.mod
           check-latest: true
 
-      # ===============================================================
-      # 【修改】新增步骤：安装 garble 混淆工具 (Windows)
-      # ===============================================================
-      - name: Install Garble (Obfuscator)
-        shell: pwsh
-        run: |
-          # 〔中文注释〕: 安装 garble 工具
-          go install mvdan.cc/garble@latest
-          # 〔中文注释〕: 将 garble 的安装路径添加到 PATH，以确保它能在后续步骤中被调用
-          $env:PATH += ";$(go env GOPATH)\bin"
-
       - name: Build X-Panel for Windows
         # 〔中文注释〕: 使用 PowerShell 执行脚本，更符合 Windows 环境
         shell: pwsh
@@ -208,12 +183,8 @@ jobs:
           # 〔中文注释〕: CGO 在 Windows 下通常不需要，设置为 0
           $env:CGO_ENABLED = "0"
 
-          # ===============================================================
-          # 【修改】使用 garble 进行混淆编译
-          # 1. garble 默认安装在 go/bin 下，actions/setup-go 会将其加入 PATH，可直接调用
-          # 2. 使用 -tiny 参数增强混淆
-          # ===============================================================
-          garble -tiny build -ldflags "-w -s" -o x-ui-release.exe -v main.go
+          # 〔中文注释〕: 执行 Go 编译命令。-o 指定输出文件为 .exe 可执行文件
+          go build -ldflags "-w -s" -o x-ui-release.exe -v main.go
 
           # 〔中文注释〕: 创建用于打包的文件夹
           mkdir x-ui
@@ -226,8 +197,8 @@ jobs:
           cd x-ui\bin
           
           # 〔中文注释〕: 下载 Windows 版本的 Xray-core 依赖
-          # 注意：这里的 Xray 版本号 (v25.10.15) 沿用 Linux 脚本中的版本
-          $Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v25.10.15/"
+          # 注意：这里的 Xray 版本号 (v25.12.2) 沿用 Linux 脚本中的版本
+          $Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v25.12.2/"
           if ("${{ matrix.platform }}" -eq "amd64") {
             # Invoke-WebRequest 是 PowerShell 的下载命令，等同于 wget
             Invoke-WebRequest -Uri "${Xray_URL}Xray-windows-64.zip" -OutFile "xray.zip"
@@ -277,7 +248,6 @@ jobs:
           name: x-ui-windows-${{ matrix.platform }}
           # 〔中文注释〕: 上传的压缩包路径
           path: ./x-ui-windows-${{ matrix.platform }}.zip
-          retention-days: 1   # <--- 强制只保留1天
 
       - name: Upload files to GH release
         uses: svenstaro/upload-release-action@v2
