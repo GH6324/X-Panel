@@ -923,9 +923,10 @@ XUI_BIN_FOLDER="bin" XUI_DB_FOLDER="/etc/x-ui" go build main.go
 - [2、Dmit高端GIA线路：https://www.dmit.io/aff.php?aff=9326](https://www.dmit.io/aff.php?aff=9326)
 - [3、Gomami亚太顶尖优化线路：https://gomami.io/aff.php?aff=174](https://gomami.io/aff.php?aff=174)
 - [4、ISIF优质亚太优化线路：https://cloud.isif.net/login?affiliation_code=333](https://cloud.isif.net/login?affiliation_code=333)
-- [5、Bagevm优质落地鸡（原生IP全解锁）：https://www.bagevm.com/aff.php?aff=754](https://www.bagevm.com/aff.php?aff=754)
-- [6、白丝云【4837线路】实惠量大管饱：https://cloudsilk.io/aff.php?aff=706](https://cloudsilk.io/aff.php?aff=706)
-- [7、RackNerd极致性价比机器：https://my.racknerd.com/aff.php?aff=15268&pid=912](https://my.racknerd.com/aff.php?aff=15268&pid=912)
+- [5、ZoroCloud全球优质原生家宽&住宅双lSP，跨境首选：https://my.zorocloud.com/aff.php?aff=1072](https://my.zorocloud.com/aff.php?aff=1072)
+- [6、Bagevm优质落地鸡（原生IP全解锁）：https://www.bagevm.com/aff.php?aff=754](https://www.bagevm.com/aff.php?aff=754)
+- [7、白丝云【4837线路】实惠量大管饱：https://cloudsilk.io/aff.php?aff=706](https://cloudsilk.io/aff.php?aff=706)
+- [8、RackNerd极致性价比机器：https://my.racknerd.com/aff.php?aff=15268&pid=912](https://my.racknerd.com/aff.php?aff=15268&pid=912)
 
 ------------
 ## 特别感谢
