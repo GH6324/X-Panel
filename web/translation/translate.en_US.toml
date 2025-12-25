@@ -55,7 +55,7 @@
 "install" = "Install"
 "clients" = "Clients"
 "usage" = "Usage"
-"twoFactorCode" = "Code"
+"twoFactorCode" = "TwoStepCode"
 "remained" = "Remained"
 "security" = "Security"
 "secAlertTitle" = "Security Alert"
