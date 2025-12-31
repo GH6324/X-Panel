@@ -78,7 +78,7 @@ install_paid_version() {
     echo ""
     
     # 4. 设置您的授权服务器地址
-    AUTH_SERVER_URL="https://auth.wudust.top/install_pro.php"
+    AUTH_SERVER_URL="https://auth.x-panel.vip/install_pro.php"
     
     echo -e "${green}正在连接〔远程授权服务器〕进行验证......${plain}"
     echo ""
