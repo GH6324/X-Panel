@@ -572,7 +572,7 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 	case "oneclick":
 		onlyMessage = true
 		if isAdmin {
-			t.SendMsgToTgbot(chatId, "〔一键配置〕功能现已升级为“付费Pro版”专属功能，\n\n请联系面板管理员〔购买授权码〕之后才能继续使用，\n\n----->>> 面板管理员私聊机器人：@Buy_ShouQuan_Bot")
+			t.SendMsgToTgbot(chatId, "〔一键配置〕功能现已升级为“付费Pro版”专属功能，\n\n请联系面板管理员〔购买授权码〕之后才能继续使用，\n\n----->>> “授权码购买”机器人：@Buy_ShouQuan_Bot")
 		} else {
 			handleUnknownCommand()
 		}
@@ -1990,7 +1990,7 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 	 case "oneclick_options":
 		 t.deleteMessageTgBot(chatId, callbackQuery.Message.GetMessageID())
 		 t.sendCallbackAnswerTgBot(callbackQuery.ID, "功能升级提示......")
-		 t.SendMsgToTgbot(chatId, "〔一键配置〕功能现已升级为“付费Pro版”专属功能，\n\n请联系面板管理员〔购买授权码〕之后才能继续使用，\n\n----->>> 面板管理员私聊机器人：@Buy_ShouQuan_Bot")
+		 t.SendMsgToTgbot(chatId, "〔一键配置〕功能现已升级为“付费Pro版”专属功能，\n\n请联系面板管理员〔购买授权码〕之后才能继续使用，\n\n----->>> “授权码购买”机器人：@Buy_ShouQuan_Bot")
 
 	 case "subconverter_install":
 		 t.deleteMessageTgBot(chatId, callbackQuery.Message.GetMessageID())
