@@ -2,6 +2,8 @@ module x-ui
 
 go 1.25.5
 
+replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20260109181451-4be7c433dae2
+
 require (
 	github.com/gin-contrib/gzip v1.2.5
 	github.com/gin-contrib/sessions v1.0.4
