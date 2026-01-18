@@ -251,7 +251,7 @@
         <template v-if="outbound.canEnableVisionSeed()">
           <a-form-item label="Vision Pre-Connect">
             <a-input-number v-model.number="outbound.settings.testpre" :min="0" :max="10" :style="{ width: '100%' }"
-              placeholder="0"></a-input-number>
+              placeholder="5"></a-input-number>
           </a-form-item>
           <a-form-item label="Vision Seed">
             <a-row :gutter="8">
