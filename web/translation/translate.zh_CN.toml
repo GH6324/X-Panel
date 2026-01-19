@@ -161,6 +161,8 @@
 "tgGroupChat" = "〔X-Panel面板〕交流群"
 "portCheck" = "端口检测"
 "speedTest" = "网络测速"
+"datasnapshot" = "创建数据快照"
+"emergencyrecovery" = "远程急救还原"
 
 [pages.inbounds]
 "allTimeTraffic" = "累计总流量"
