@@ -159,6 +159,8 @@
 "tgGroupChat" = "〔X-Panel〕Group Chat"
 "portCheck" = "Port Check"
 "speedTest" = "Speed Test"
+"datasnapshot" = "Data Snapshot"
+"emergencyrecovery" = "Emergency Recovery"
 
 [pages.inbounds]
 "allTimeTraffic" = "All-time Traffic"
