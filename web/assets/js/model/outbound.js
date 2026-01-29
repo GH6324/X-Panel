@@ -610,16 +610,24 @@ class StreamSettings extends CommonClass {
         this.httpupgrade = httpupgradeSettings;
         this.xhttp = xhttpSettings;
         this.hysteria = hysteriaSettings;
-        this.udpmasks = udpmasks;
+        // 修复：强制确保 udpmasks 是一个数组，防止 undefined
+        this.udpmasks = Array.isArray(udpmasks) ? udpmasks : [];
         this.sockopt = sockopt;
     }
 
     addUdpMask() {
+        // 修复：如果 udpmasks 意外丢失（undefined），点击按钮时自动初始化它
+        if (!this.udpmasks || !Array.isArray(this.udpmasks)) {
+            this.udpmasks = [];
+        }
         this.udpmasks.push(new UdpMask());
     }
 
     delUdpMask(index) {
-        this.udpmasks.splice(index, 1);
+        // 修复：删除前的安全检查
+        if (this.udpmasks && Array.isArray(this.udpmasks)) {
+            this.udpmasks.splice(index, 1);
+        }
     }
 
     get isTls() {
@@ -671,7 +679,8 @@ class StreamSettings extends CommonClass {
             httpupgradeSettings: network === 'httpupgrade' ? this.httpupgrade.toJson() : undefined,
             xhttpSettings: network === 'xhttp' ? this.xhttp.toJson() : undefined,
             hysteriaSettings: network === 'hysteria' ? this.hysteria.toJson() : undefined,
-            udpmasks: this.udpmasks.length > 0 ? this.udpmasks.map(mask => mask.toJson()) : undefined,
+            // 修复：在序列化时增加安全检查 ，防止 length 报错(this.udpmasks && this.udpmasks.length > 0)
+            udpmasks: (this.udpmasks && this.udpmasks.length > 0) ? this.udpmasks.map(mask => mask.toJson()) : undefined,
             sockopt: this.sockopt != undefined ? this.sockopt.toJson() : undefined,
         };
     }
