@@ -609,7 +609,7 @@ class TlsStreamSettings extends XrayCommonClass {
         maxVersion = TLS_VERSION_OPTION.TLS13,
         cipherSuites = '',
         rejectUnknownSni = false,
-        verifyPeerCertByName = ['dns.google', 'cloudflare-dns.com'],
+        verifyPeerCertByNames = ['dns.google', 'cloudflare-dns.com'],
         pinnedPeerCertSha256 = [],
         disableSystemRoot = false,
         enableSessionResumption = false,
@@ -625,7 +625,7 @@ class TlsStreamSettings extends XrayCommonClass {
         this.maxVersion = maxVersion;
         this.cipherSuites = cipherSuites;
         this.rejectUnknownSni = rejectUnknownSni;
-        this.verifyPeerCertByName = Array.isArray(verifyPeerCertByName) ? verifyPeerCertByName.join(",") : verifyPeerCertByName;
+        this.verifyPeerCertByNames = Array.isArray(verifyPeerCertByNames) ? verifyPeerCertByNames.join(",") : verifyPeerCertByNames;
         this.pinnedPeerCertSha256 = pinnedPeerCertSha256;
         this.disableSystemRoot = disableSystemRoot;
         this.enableSessionResumption = enableSessionResumption;
@@ -660,7 +660,7 @@ class TlsStreamSettings extends XrayCommonClass {
             json.maxVersion,
             json.cipherSuites,
             json.rejectUnknownSni,
-            json.verifyPeerCertByName,
+            json.verifyPeerCertByNames,
             json.pinnedPeerCertSha256 || [],
             json.disableSystemRoot,
             json.enableSessionResumption,
@@ -679,7 +679,7 @@ class TlsStreamSettings extends XrayCommonClass {
             maxVersion: this.maxVersion,
             cipherSuites: this.cipherSuites,
             rejectUnknownSni: this.rejectUnknownSni,
-            verifyPeerCertByName: this.verifyPeerCertByName.split(","),
+            verifyPeerCertByNames: this.verifyPeerCertByNames.split(","),
             pinnedPeerCertSha256: this.pinnedPeerCertSha256.length > 0 ? this.pinnedPeerCertSha256 : undefined,
             disableSystemRoot: this.disableSystemRoot,
             enableSessionResumption: this.enableSessionResumption,
