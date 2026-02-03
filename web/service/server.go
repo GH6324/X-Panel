@@ -756,6 +756,35 @@ func (s *ServerService) ImportDB(file multipart.File) error {
 	return nil
 }
 
+// IsValidGeofileName validates that the filename is safe for geofile operations.
+// It checks for path traversal attempts and ensures the filename contains only safe characters.
+func (s *ServerService) IsValidGeofileName(filename string) bool {
+	if filename == "" {
+		return false
+	}
+
+	// Check for path traversal attempts
+	if strings.Contains(filename, "..") {
+		return false
+	}
+
+	// Check for path separators (both forward and backward slash)
+	if strings.ContainsAny(filename, `/\`) {
+		return false
+	}
+
+	// Check for absolute path indicators
+	if filepath.IsAbs(filename) {
+		return false
+	}
+
+	// Additional security: only allow alphanumeric, dots, underscores, and hyphens
+	// This is stricter than the general filename regex
+	validGeofilePattern := `^[a-zA-Z0-9._-]+\.dat$`
+	matched, _ := regexp.MatchString(validGeofilePattern, filename)
+	return matched
+}
+
 func (s *ServerService) UpdateGeofile(fileName string) error {
 	files := []struct {
 		URL      string
