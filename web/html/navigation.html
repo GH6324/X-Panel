@@ -108,7 +108,7 @@
   <a-layout id="content-layout">
     <a-layout-content>
       <a-spin :spinning="false">
-        <a-tabs default-active-key="1">
+        <a-tabs v-model="activeKey">
           <a-tab-pane key="1">
             <template #tab>
               <a-icon type="tool"></a-icon>
@@ -407,7 +407,20 @@
     el: '#app',
     data: {
       themeSwitcher, // 确保主题切换器对象在 Vue 实例中可用
+
+            // 【新增】：用于控制当前选中的标签页，默认为 '1'
+            activeKey: '1',
     },
+
+    async mounted() {
+            // 【新增】：检查 URL 是否带有 ?tab=x 参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                // 如果有参数，就自动切换到对应的标签页 (例如 '3')
+                this.activeKey = tab;
+            }
+        },
   });
 </script>
 {{ template "page/body_end" .}}
