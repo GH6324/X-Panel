@@ -2,7 +2,7 @@ module x-ui
 
 go 1.25.6
 
-replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20260109181451-4be7c433dae2
+replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20260122175437-89a5d21be8f0
 
 require (
 	github.com/gin-contrib/gzip v1.2.5
@@ -94,6 +94,5 @@ require (
 	golang.zx2c4.com/wireguard v0.0.0-20250521234502-f333402bd9cb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260128011058-8636f8732409 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
-	gvisor.dev/gvisor v0.0.0-20260122175437-89a5d21be8f0 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
